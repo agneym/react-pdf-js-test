@@ -2,6 +2,8 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = function (_env, argv) {
   const isProduction = argv.mode === "production";
@@ -74,7 +76,14 @@ module.exports = function (_env, argv) {
         template: path.resolve(__dirname, "public/index.html"),
         inject: true,
       }),
-      new ReactRefreshPlugin(),
+      isDevelopment && new ReactRefreshPlugin(),
+      new CleanWebpackPlugin(),
+      isProduction &&
+        new CopyPlugin({
+          patterns: [
+            { from: "public", globOptions: { ignore: ["**/index.html"] } },
+          ],
+        }),
     ].filter(Boolean),
   };
 };
