@@ -1,8 +1,9 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-module.exports = function(_env, argv) {
+module.exports = function (_env, argv) {
   const isProduction = argv.mode === "production";
   const isDevelopment = !isProduction;
 
@@ -12,27 +13,26 @@ module.exports = function(_env, argv) {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "assets/js/[name].[contenthash:8].js",
-      publicPath: "/"
+      publicPath: "/",
     },
     devServer: {
       open: true,
       historyApiFallback: true,
-      overlay: true,
-      compress: true
+      compress: true,
     },
     module: {
       rules: [
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
-          use: ["babel-loader"]
+          use: ["babel-loader"],
         },
         {
           test: /\.css$/,
           use: [
             isProduction ? MiniCssExtractPlugin.loader : "style-loader",
-            "css-loader"
-          ]
+            "css-loader",
+          ],
         },
         {
           test: /\.(png|jpe?g|gif|svg|ico)$/,
@@ -40,10 +40,10 @@ module.exports = function(_env, argv) {
             {
               loader: "file-loader",
               options: {
-                name: "assets/img/[name].[contenthash:8].[ext]"
-              }
-            }
-          ]
+                name: "assets/img/[name].[contenthash:8].[ext]",
+              },
+            },
+          ],
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -51,26 +51,27 @@ module.exports = function(_env, argv) {
             {
               loader: "file-loader",
               options: {
-                name: "assets/fonts/[name].[contenthash:8].[ext]"
-              }
-            }
-          ]
-        }
-      ]
+                name: "assets/fonts/[name].[contenthash:8].[ext]",
+              },
+            },
+          ],
+        },
+      ],
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: [".js", ".jsx"],
     },
     plugins: [
       isProduction &&
         new MiniCssExtractPlugin({
           filename: "assets/css/[name].[contenthash:8].css",
-          chunkFilename: "assets/css/[name].[contenthash:8].chunk.css"
+          chunkFilename: "assets/css/[name].[contenthash:8].chunk.css",
         }),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, "public/index.html"),
-        inject: true
-      })
+        inject: true,
+      }),
+      new ReactRefreshPlugin(),
     ].filter(Boolean),
   };
 };
